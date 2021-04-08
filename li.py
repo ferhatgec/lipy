@@ -14,11 +14,45 @@
 # github.com/ferhatgec/lirs
 
 from os import path, listdir, getcwd
+from pathlib import Path
+from re import search
 
 class Lipy:
     def __init__(self):
         self.directory = getcwd()
         self.file = ''
+
+        self.everything = []
+
+    def between(self, data: str, substring: str, substring2: str) -> str:
+        return search(substring + '(.*)' + substring2, data).group(1)
+
+    def get(self, extension: str) -> tuple:
+        extension = extension[1:]
+
+        for data in self.everything:
+            if extension == data[1]:
+                return (data[0], data[2])
+
+        return ('[File]:      ', 34)
+
+    def parse(self, data: str):
+        color = int(self.between(data, '\>\{', '\}\<'))
+
+        if color == 0:
+            color = 34
+
+        name = self.between(data, '\>\'', '\'<')
+        extension = self.between(data, '\>\"', '\"<')
+
+        self.everything.append((name, extension, color))
+
+    def read_data(self):
+        if path.exists(str(Path.home()) + '/' + '.lirs_data'):
+            file_data = open(str(Path.home()) + '/' + '.lirs_data')
+
+            for line in file_data.readlines():
+                self.parse(line)
 
     def printf(self, color, data):
         print(color, data, '\033[1;97m', self.file, sep='', end='\n')
@@ -61,11 +95,14 @@ class Lipy:
         elif arg == '.rslib': self.printf('\033[1;33m',          '[Rust]:      ')
         elif arg == '.lua': self.printf('\033[1;0m',             '[Lua]:       ')
         elif arg == '.inclink': self.printf('\033[1;35m',        '[incLink]:   ')
-        else: self.printf('\033[1;34m',                          '[File]:      ')
+        else:
+            get = self.get(arg)
+            self.printf('\033[1;{}m'.format(get[1]), get[0])
 
 
     def match_content(self):
         dirs = listdir(getcwd())
+        self.read_data()
 
         for data in dirs:
             self.file = data
