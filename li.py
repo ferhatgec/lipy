@@ -12,6 +12,7 @@
 # github.com/ferhatgec/scrift
 # ===========================
 # github.com/ferhatgec/lirs
+#
 
 from os import path, listdir, getcwd
 from pathlib import Path
@@ -22,10 +23,21 @@ class Lipy:
         self.directory = getcwd()
         self.file = ''
 
-        self.everything = []
+        self.everything = [] # tuple(str, str, int)
+        #                            ^^^  ^^^  ^^^
+        #                           name  ext  color
 
     def between(self, data: str, substring: str, substring2: str) -> str:
         return search(substring + '(.*)' + substring2, data).group(1)
+
+    # Parser for Li[dot]py
+    #
+    # Syntax:
+    #
+    # > '[Kalem]:     ' < > "kalem" < > {95} <
+    #    ^^^^^^^^^        ^^^^^^^^^^^   ^^^^^
+    # > 'name' < > "extension" < > {ansi_color} <
+    #
 
     def get(self, extension: str) -> tuple:
         extension = extension[1:]
@@ -67,6 +79,7 @@ class Lipy:
 
         arg = path.splitext(arg)[1]
 
+        # Built-in extensions.
         if arg == '.scrift_log': self.printf('\033[1;33m',       'FeLog*:      ')
         elif arg == '.scrift_ascii': self.printf('\033[1;33m',   'Ascii Art*:  ')
         elif arg == '.scrift_settings': self.printf('\033[1;33m','Settings*:   ')
