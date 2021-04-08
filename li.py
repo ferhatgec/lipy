@@ -53,6 +53,9 @@ class Lipy:
 
             for line in file_data.readlines():
                 self.parse(line)
+        else:
+            open(str(Path.home()) + '/' + '.lirs_data', "x")
+            self.read_data()
 
     def printf(self, color, data):
         print(color, data, '\033[1;97m', self.file, sep='', end='\n')
@@ -64,7 +67,7 @@ class Lipy:
 
         arg = path.splitext(arg)[1]
 
-        if arg == '.scrift_log': self.printf('\033[1;33m',     'FeLog*:      ')
+        if arg == '.scrift_log': self.printf('\033[1;33m',       'FeLog*:      ')
         elif arg == '.scrift_ascii': self.printf('\033[1;33m',   'Ascii Art*:  ')
         elif arg == '.scrift_settings': self.printf('\033[1;33m','Settings*:   ')
         elif arg == '.scrift_history': self.printf('\033[1;33m', 'History*:    ')
